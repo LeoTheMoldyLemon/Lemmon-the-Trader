@@ -1,0 +1,24 @@
+{
+  "name": "lemmon",
+  "version": "1.0.0",
+  "description": "Economy bot for DnD 5e westmarch servers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "economy",
+    "dnd",
+    "discord.js",
+    "bot",
+    "westmarch"
+  ],
+  "author": "LeoTheLemon",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "path": "^0.12.7",
+    "sequelize": "^6.28.0",
+    "sqlite3": "^5.1.4"
+  }
+}
