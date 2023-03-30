@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			primaryKey: true,
 		},
+		hitdie: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 8,
+		}
 	}, {
 		paranoid: true,
 	});

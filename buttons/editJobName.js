@@ -4,35 +4,32 @@ var config=require("../config.json")
 const fs=require("fs")
 
 module.exports = {
-	data: {name:"shopPostBuyUnlistedName"},
+	data: {name:"editJobName"},
 	async execute(interaction, sequelize, models, metadata) {
 		try {
-			metadata.name="shopPostBuyUnlisted"
-			metadata.charname=interaction.values[0]
 			const modal= new ModalBuilder()
 				.setCustomId(JSON.stringify(metadata))
-				.setTitle("Buying custom item.")
+				.setTitle("Editing job")
 				.addComponents(
 					new ActionRowBuilder().addComponents(
 						new TextInputBuilder()
-							.setCustomId("item-name")
-							.setLabel("Name of the item/service:")
+							.setCustomId("name")
+							.setLabel("Name of the job:")
 							.setStyle(TextInputStyle.Short)
 					),
 					new ActionRowBuilder().addComponents(
 						new TextInputBuilder()
-							.setCustomId("price")
-							.setLabel("Price of the item/service:")
-							.setStyle(TextInputStyle.Short)
-					),
+							.setCustomId("description")
+							.setLabel("Description of the job:")
+							.setStyle(TextInputStyle.Paragraph),
+					)
 				)
 			interaction.showModal(modal)
-			return null
 			
 		}
 		catch (error) {
 			console.error(error)
-			return interaction.reply({content:'Something went wrong with buying the item.', ephemeral:true});
+			return interaction.reply({content:'Something went wrong with editing the job.', ephemeral:true});
 		}
 	},
 };

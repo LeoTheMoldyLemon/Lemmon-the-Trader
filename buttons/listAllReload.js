@@ -5,7 +5,7 @@ const fs=require("fs")
 const { Op } = require("sequelize");
 
 module.exports = {
-	data: {name:"listReload"},
+	data: {name:"listAllReload"},
 	async execute(interaction, sequelize, models, metadata) {
 		try {
 			let where={guildid:interaction.guildId}
@@ -27,9 +27,7 @@ module.exports = {
 			let owners={}
 			let total=0
 			for (ch of chars){
-				if(ch.owner!=interaction.user.id){
-					continue;
-				}
+				
 				if(!owners[ch.owner]){
 					owners[ch.owner]=""
 				}else{
@@ -111,19 +109,19 @@ module.exports = {
 			let btns = new ActionRowBuilder();
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listPrevious"}')
+					.setCustomId('{"name":"listAllPrevious"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`<<< Previous Page`),
 			);
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listReload"}')
+					.setCustomId('{"name":"listAllReload"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`Reload Page`),
 			);
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listNext"}')
+					.setCustomId('{"name":"listAllNext"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`Next Page >>>`),
 			);

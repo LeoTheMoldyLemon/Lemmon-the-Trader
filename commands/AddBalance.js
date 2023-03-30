@@ -90,8 +90,12 @@ module.exports = {
 					price: bal.value,
 					guildid:interaction.guildId,
 				})
+				let warning=""
+				if(character.owner==interaction.user.id){
+					warning=" **This character belongs to the GM who made this transaction.**"
+				}
 				await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-				.then(async (channel)=>{await channel.send({content:`${interaction.user.username} gave ${character.charname} ${toGold(bal.value)}. Reason: ${reason}`})})
+				.then(async (channel)=>{await channel.send({content:`${interaction.user.username} gave ${character.charname} ${toGold(bal.value)}. Reason: ${reason}`+warning})})
 				try{
 					await interaction.client.users.fetch(character.owner)
 						.then(async(user)=>{await user.send(`A GM gave ${character.charname} ${toGold(bal.value)}. Reason: ${reason}. New balance: ${toGold(character.balance)}.`)})

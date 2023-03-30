@@ -39,13 +39,13 @@ module.exports = {
 					await interaction.client.users.fetch(character.owner)
 						.then(async(user)=>{await user.send(`The request for ${character.charname} to collect ${embed.fields[3].value} due to reason: ${embed.fields[2].value}; has been **approved** by ${interaction.user.username}. (New balance: ${toGold(character.balance)})`)})
 					await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-						.then(async (channel)=>{await channel.send({content:`${character.charname} collected ${embed.fields[3].value}. Reason: ${embed.fields[2].value}. `})})
+						.then(async (channel)=>{await channel.send({content:`${character.charname} collected ${embed.fields[3].value}. Reason: ${embed.fields[2].value}. ` + ((character.owner==interaction.user.id) ? " **The GM who approved this request is the owner of the character which made the request.**":"")})})
 				}
 				if(typename=="Sell Request"){
 					await interaction.client.users.fetch(character.owner)
 						.then(async(user)=>{await user.send(`The request for ${character.charname} to sell ${embed.fields[2].value} to ${embed.fields[0].value} for ${embed.fields[3].value} has been **approved** by ${interaction.user.username}. (New balance: ${toGold(character.balance)})`)})
 					await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-						.then(async (channel)=>{await channel.send({content:`${character.charname} sold ${embed.fields[2].value} to ${embed.fields[0].value} for ${embed.fields[3].value}.`})})
+						.then(async (channel)=>{await channel.send({content:`${character.charname} sold ${embed.fields[2].value} to ${embed.fields[0].value} for ${embed.fields[3].value}.` + ((character.owner==interaction.user.id) ? " **The GM who approved this request is the owner of the character which made the request.**":"")})})
 				}
 				await models.transactions.create({
 					sellername: character.charname,
@@ -55,7 +55,7 @@ module.exports = {
 					guildid: interaction.guildId,
 				})
 				embed.author={}
-				embed.author.name=interaction.user.username
+				embed.author.name=interaction.member.displayName
 				embed.author.icon_url=await interaction.user.avatarURL(true)
 				embed.description="**Approved**"
 				await interaction.message.edit({embeds:[embed], components:[]})
@@ -72,7 +72,7 @@ module.exports = {
 					}
 					embed.color=0xc70101
 					embed.author={}
-					embed.author.name=interaction.user.username
+					embed.author.name=interaction.member.displayName
 					embed.author.icon_url=await interaction.user.avatarURL(true)
 					embed.description="**Denied**. Reason:\n```Not enough of coin.```"
 					await interaction.message.edit({embeds:[embed], components:[]})
@@ -97,16 +97,16 @@ module.exports = {
 					await interaction.client.users.fetch(character.owner)
 						.then(async(user)=>{await user.send(`The request for ${character.charname} to buy ${embed.fields[2].value} from ${embed.fields[1].value} for ${embed.fields[3].value} has been **approved** by ${interaction.user.username}. (Remaining balance: ${toGold(character.balance)})`)})
 					await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-						.then(async (channel)=>{await channel.send({content:`${character.charname} bought ${embed.fields[2].value} from ${embed.fields[1].value} for ${embed.fields[3].value}.`})})
+						.then(async (channel)=>{await channel.send({content:`${character.charname} bought ${embed.fields[2].value} from ${embed.fields[1].value} for ${embed.fields[3].value}.` + ((character.owner==interaction.user.id) ? " **The GM who approved this request is the owner of the character which made the request.**":"")})})
 				}
 				if(typename=="Spend Request"){
 					await interaction.client.users.fetch(character.owner)
 						.then(async(user)=>{await user.send(`The request for ${character.charname} to spend ${embed.fields[3].value} due to reason: ${embed.fields[2].value} has been **approved** by ${interaction.user.username}. (Remaining balance: ${toGold(character.balance)})`)})
 					await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-						.then(async (channel)=>{await channel.send({content:`${character.charname} spent ${embed.fields[3].value}. Reason: ${embed.fields[2].value}. `})})
+						.then(async (channel)=>{await channel.send({content:`${character.charname} spent ${embed.fields[3].value}. Reason: ${embed.fields[2].value}. ` + ((character.owner==interaction.user.id) ? " **The GM who approved this request is the owner of the character which made the request.**":"")})})
 				}
 				embed.author={}
-				embed.author.name=interaction.user.username
+				embed.author.name=interaction.member.displayName
 				embed.author.icon_url=await interaction.user.avatarURL(true)
 				embed.description="**Approved**"
 				await interaction.message.edit({embeds:[embed], components:[]})

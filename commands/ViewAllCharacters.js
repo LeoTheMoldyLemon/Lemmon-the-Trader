@@ -1,35 +1,31 @@
-const { SlashCommandBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle,  PermissionFlagsBits, ModalBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder,  PermissionFlagsBits, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { toInt, toGold } = require("../utils.js")
-var config=require("../config.json")
-const fs=require("fs")
+const config = require("../config.json")
 const { Op } = require("sequelize");
 
 module.exports = {
-	data: {name:"listReload"},
-	async execute(interaction, sequelize, models, metadata) {
+	data: new SlashCommandBuilder()
+		.setName('view-all-characters')
+		.setDescription("View a list of all characters and their balance on this server.")
+		.addStringOption(option =>
+			option.setName('search-query')
+				.setDescription('Type in part of the name of the character. (case insensitive)'))
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageEvents)
+		.setDMPermission(false),
+	async execute(interaction, sequelize, models) {
 		try {
+			await interaction.deferReply({ephemeral:true})
 			let where={guildid:interaction.guildId}
-			let query=null
-			let page=0
-			for(let field of interaction.message.embeds[0].fields){
-				if(field.name=="Page:"){
-					page=parseInt(field.value)-1
-				}else if(field.name=="Search query:"){
-					query=field.value
-				}
-			}
-			
+			let query=await interaction.options.getString("search-query")
 			if(query){
 				query=query.toLowerCase()
 				where={[Op.and]: [where, sequelize.where(sequelize.fn('lower', sequelize.col('charname')), {[Op.like]:`%${query}%`})]}
 			}
 			let chars = await models.characters.findAll({where:where,attributes:["charname", "balance", "owner"]})
 			let owners={}
+			let page=0
 			let total=0
 			for (ch of chars){
-				if(ch.owner!=interaction.user.id){
-					continue;
-				}
 				if(!owners[ch.owner]){
 					owners[ch.owner]=""
 				}else{
@@ -81,7 +77,7 @@ module.exports = {
 				}
 			}
 			if(fields.length!=0){
-				fields.push({"name":"Page:", "value":(Math.min(page, embeds.length)+1).toString()})
+				fields.push({"name":"Page:", "value":(page+1).toString()})
 				if(query)fields.push({"name":"Search query:", "value":query})
 				embeds.push({
 					"type": "rich",
@@ -111,29 +107,28 @@ module.exports = {
 			let btns = new ActionRowBuilder();
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listPrevious"}')
+					.setCustomId('{"name":"listAllPrevious"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`<<< Previous Page`),
 			);
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listReload"}')
+					.setCustomId('{"name":"listAllReload"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`Reload Page`),
 			);
 			btns.addComponents(
 				new ButtonBuilder()
-					.setCustomId('{"name":"listNext"}')
+					.setCustomId('{"name":"listAllNext"}')
 					.setStyle(ButtonStyle.Primary)
 					.setLabel(`Next Page >>>`),
 			);
 			
-			return interaction.update({embeds:[embeds[Math.min(page, embeds.length-1)]], components:[btns], ephemeral:true})
-			
+			return interaction.editReply({embeds:[embeds[page]], components:[btns], ephemeral:true})
 		}
 		catch (error) {
 			console.error(error)
-			return interaction.reply({content:'Something went wrong with turning to the next page.', ephemeral:true});
+			return interaction.editReply({content:'Something went wrong with displaying the table.', ephemeral:true});
 		}
 	},
 };

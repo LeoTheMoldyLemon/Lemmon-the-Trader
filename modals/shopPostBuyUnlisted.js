@@ -8,7 +8,7 @@ module.exports = {
 	data: {name:"shopPostBuyUnlisted"},
 	async execute(interaction, sequelize, models, metadata) {
 		try {
-			await interaction.deferReply({ephemeral:true})
+			await interaction.deferUpdate({ephemeral:true})
 			let name=metadata.charname
 			let character = await models.characters.findOne({where:{
 				[Op.or]:[
@@ -56,7 +56,7 @@ module.exports = {
 					.setLabel(`Deny`),
 			);
 			await interaction.client.channels.fetch(config.servers[interaction.guildId].requestChannelId).then(async (channel)=>{await channel.send({embeds:[embed], components:[btns]})})
-			return interaction.editReply({content:`Request was sent to the GMs for ${character.charname} to buy ${item} for ${toGold(price.value)}.`,components:[], ephemeral:true});
+			return interaction.editReply({content:`Request was sent to the GMs in <#${config.servers[interaction.guildId].requestChannelId}> for ${character.charname} to buy ${item} for ${toGold(price.value)}. You can cancel it by pressing "Deny" on the request.`,components:[], ephemeral:true});
 		}
 		
 		catch (error) {

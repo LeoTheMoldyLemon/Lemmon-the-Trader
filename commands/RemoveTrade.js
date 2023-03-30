@@ -6,8 +6,8 @@ const fs=require("fs")
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('remove-trade')
-		.setDescription('Edits a trade in a shop.')
-		.addStringOption(option =>
+		.setDescription('Removes a trade from a shop.')
+		.addIntegerOption(option =>
 			option.setName('trade-number')
 				.setDescription('The ordinal number of the trade.')
 				.setRequired(true))
@@ -27,7 +27,7 @@ module.exports = {
 			}catch{
 				return interaction.reply({content:'No valid collections with that id exist in this channel.', ephemeral:true});
 			}
-			let num=parseInt(interaction.options.getString("trade-number"))
+			let num=parseInt(interaction.options.getInteger("trade-number"))
 			if(isNaN(num)){
 				return interaction.reply({content:'Not a valid trade number.', ephemeral:true});
 			}
@@ -70,7 +70,7 @@ module.exports = {
 				rows.push(new ActionRowBuilder().addComponents(selectmenu))
 				
 			}
-			msg.edit({components:rows})
+			await msg.edit({components:rows})
 			
 			return interaction.reply({content:'Removed trade.', ephemeral:true});
 		}

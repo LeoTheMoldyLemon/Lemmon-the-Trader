@@ -47,13 +47,17 @@ module.exports = {
 				guildid:interaction.guildId,
 			})
 			try{
-			await interaction.client.users.fetch(character.owner)
-				.then(async(user)=>{await user.send(`A GM set the balance of ${character.charname} to ${toGold(bal.value)}. Reason: ${reason}.`)})
+				await interaction.client.users.fetch(character.owner)
+					.then(async(user)=>{await user.send(`A GM set the balance of ${character.charname} to ${toGold(bal.value)}. Reason: ${reason}.`)})
 			}catch(e){
 				console.log(e)
 			}
+			let warning=""
+			if(character.owner==interaction.user.id){
+				warning=" **This character belongs to the GM who made this transaction.**"
+			}
 			await interaction.client.channels.fetch(config.servers[interaction.guildId].transactionChannelId)
-				.then(async (channel)=>{await channel.send({content:`${interaction.user.username} set the balance of ${character.charname} to ${toGold(bal.value)}. Reason: ${reason}..`})})
+				.then(async (channel)=>{await channel.send({content:`${interaction.user.username} set the balance of ${character.charname} to ${toGold(bal.value)}. Reason: ${reason}`+warning})})
 			return interaction.editReply({content:`Updated character named *${character.charname}* for/because of ${reason}, new balance is ${toGold(character.balance)}.`, ephemeral:true});
 			
 		}

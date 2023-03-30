@@ -7,9 +7,9 @@ module.exports = {
 	data: {name:"shopPostBuyMultiple"},
 	async execute(interaction, sequelize, models, metadata) {
 		try {
-			let characters=await models.characters.findAll({where:{owner:interaction.user.id, guildid:interaction.guildId}, attributes:["charname"]})
+			let characters=await models.characters.findAll({where:{owner:interaction.user.id, guildid:interaction.guildId}, attributes:["charname", "balance"]})
 			let options=[]
-			await characters.forEach(cha=>options.push({label:cha.charname, value:cha.charname}))
+			await characters.forEach(cha=>options.push({label:cha.charname, value:cha.charname, description:toGold(cha.balance)}))
 			metadata.name="shopPostBuyMultipleName"
 			const row=new ActionRowBuilder()
 				.addComponents(

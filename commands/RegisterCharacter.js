@@ -32,6 +32,9 @@ module.exports = {
 				return interaction.editReply({content:bal.error, ephemeral:true});
 			}
 			let name=await interaction.options.getString("character-name").trim()
+			if(name.length>40){
+				return interaction.editReply({content:'Due to internal restrictions on displaying text, Discord will not display names longer than 40 characters. Please choose a shorter name.', ephemeral:true});
+			}
 			let user=await interaction.options.getUser("user").id.toString()
 			let character = await models.characters.create({
 				charname: name,

@@ -27,7 +27,7 @@ module.exports = {
 			let owners={}
 			let total=0
 			for (ch of chars){
-				if(ch.owner!=interaction.user.id && !(await interaction.memberPermissions.has(PermissionFlagsBits.ManageEvents))){
+				if(ch.owner!=interaction.user.id){
 					continue;
 				}
 				if(!owners[ch.owner]){

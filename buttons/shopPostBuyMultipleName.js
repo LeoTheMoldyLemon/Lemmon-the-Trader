@@ -4,35 +4,30 @@ var config=require("../config.json")
 const fs=require("fs")
 
 module.exports = {
-	data: {name:"shopPostBuyUnlistedName"},
+	data: {name:"shopPostBuyMultipleName"},
 	async execute(interaction, sequelize, models, metadata) {
 		try {
-			metadata.name="shopPostBuyUnlisted"
+			let shopinfo=await models.shops.findByPk(metadata.id)
 			metadata.charname=interaction.values[0]
+			metadata.name="shopPostBuyMultiple"
 			const modal= new ModalBuilder()
 				.setCustomId(JSON.stringify(metadata))
-				.setTitle("Buying custom item.")
+				.setTitle("Buying multiple items for "+toGold(shopinfo.price))
 				.addComponents(
 					new ActionRowBuilder().addComponents(
 						new TextInputBuilder()
-							.setCustomId("item-name")
-							.setLabel("Name of the item/service:")
+							.setCustomId("amount")
+							.setLabel("Number of items/services you want to buy:")
 							.setStyle(TextInputStyle.Short)
 					),
-					new ActionRowBuilder().addComponents(
-						new TextInputBuilder()
-							.setCustomId("price")
-							.setLabel("Price of the item/service:")
-							.setStyle(TextInputStyle.Short)
-					),
+					
 				)
 			interaction.showModal(modal)
-			return null
 			
 		}
 		catch (error) {
 			console.error(error)
-			return interaction.reply({content:'Something went wrong with buying the item.', ephemeral:true});
+			return interaction.reply({content:'Something went wrong with buying the items.', ephemeral:true});
 		}
 	},
 };

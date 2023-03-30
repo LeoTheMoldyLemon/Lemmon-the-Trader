@@ -3,7 +3,7 @@ const { join } = require('path');
 const { token, db_username, db_password, lastBackup, backupTime, deleteThreshold } = require('./config.json');
 const client = new discord.Client({ intents: 65339 });
 const sequelize = require('sequelize');
-const { toInt, toGold } = require("./utils.js")
+const { toInt, toGold, rollDice } = require("./utils.js")
 const { Op } = require("sequelize");
 const fs=require("fs")
 
@@ -194,7 +194,7 @@ client.on(Events.InteractionCreate, async interaction =>{
 		}
 		try {
 			await command.execute(interaction, sequelize, client.models);
-			if(!["view-transactions", "view-characters", "view-balance", "display-guide", "help-gm", "help-player"].includes(command.data.name))setTimeout(async()=>{try{await interaction.deleteReply()}catch{}}, 60000)//deleting command replies after 1 minute
+			if(!["view-transactions", "view-characters", "view-balance", "display-guide", "help-gm", "help-player", "create-job"].includes(command.data.name))setTimeout(async()=>{try{await interaction.deleteReply()}catch{}}, 60000)//deleting command replies after 1 minute
 		} catch (e) {
 			console.error(e);
 			try{
@@ -227,7 +227,7 @@ client.on(Events.InteractionCreate, async interaction =>{
 		}
 		try {
 			let msg=await modal.execute(interaction, sequelize, client.models, metadata);
-			setTimeout(async()=>{try{await interaction.deleteReply()}catch{}}, 60000)//deleting modal replies after 1 minute
+			if(!["editJobRollDescription", "editJobName", "editJobExtraDie", "editModifiers"].includes(metadata.name))setTimeout(async()=>{try{await interaction.deleteReply()}catch{}}, 60000)//deleting command replies after 1 minute
 		} catch (e) {
 			console.error(e);
 			await interaction.reply({ content: `There was an error while processing this form!`, ephemeral: true });
@@ -238,18 +238,27 @@ client.on(Events.InteractionCreate, async interaction =>{
 		let options=[]
 		if (focusedOption.name== 'character-name-short') {
 			options = await client.models.characters.findAll(
-				{where: {
-					owner: interaction.user.id.toString(),
-					guildid:interaction.guildId,},
-				attributes:["shortname", "charname"],
+				{
+					where: {
+						owner: interaction.user.id.toString(),
+						guildid:interaction.guildId,
+					},
+					attributes:["shortname", "charname"],
 				}
 			)
-			
+		}else if(focusedOption.name=='deleted-character-name'){
+			options = await client.models.characters.findAll(
+				{
+					where: {guildid:interaction.guildId,deletedAt:{[Op.ne]:null}},
+					attributes:["charname"],
+					paranoid:false,
+				}
+			)
 		}else{
 			options = await client.models.characters.findAll(
-				{where: {
-					guildid:interaction.guildId,},
-				attributes:["charname"],
+				{
+					where: {guildid:interaction.guildId},
+					attributes:["charname"],
 				}
 			)
 		}
@@ -262,7 +271,10 @@ client.on(Events.InteractionCreate, async interaction =>{
 				display.push(cho)
 			}
 		}
-		let filtered = display.filter(choice => choice.includes(focusedOption.value)).slice(0, 25);
+		let filtered = display.filter(choice => {
+			return choice.toLowerCase().includes(focusedOption.value.toLowerCase())
+
+		}).slice(0, 25);
 		await interaction.respond(
 			filtered.map(choice => ({ name: choice, value: choice })),
 		);

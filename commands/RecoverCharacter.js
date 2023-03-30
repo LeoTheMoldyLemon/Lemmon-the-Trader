@@ -6,21 +6,22 @@ module.exports = {
 		.setName('recover-character')
 		.setDescription('Recover a deleted character.')
 		.addStringOption(option =>
-			option.setName('character-name')
+			option.setName('deleted-character-name')
 				.setDescription('The name of the character you want to recover.')
+				.setAutocomplete(true)
 				.setRequired(true))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageEvents)
 		.setDMPermission(false),
 	async execute(interaction, sequelize, models) {
 		try {
 			let output=await models.characters.restore({where:{
-				charname:await interaction.options.getString("character-name"),
+				charname:await interaction.options.getString("deleted-character-name"),
 				guildid:interaction.guildId,
 			}})
 			if(output==0){
-				return interaction.reply({content:`No deleted character with the name *${await interaction.options.getString("character-name")}* exists.`, ephemeral:true});
+				return interaction.reply({content:`No deleted character with the name ${await interaction.options.getString("deleted-character-name")} exists.`, ephemeral:true});
 			}
-			return interaction.reply({content:`Restored character named *${await interaction.options.getString("character-name")}*.`, ephemeral:true});
+			return interaction.reply({content:`Restored character named ${await interaction.options.getString("deleted-character-name")}.`, ephemeral:true});
 		}
 		catch (error) {
 			console.error(error)

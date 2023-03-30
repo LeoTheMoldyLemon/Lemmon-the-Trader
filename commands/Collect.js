@@ -70,7 +70,7 @@ module.exports = {
 					.setLabel(`Deny`),
 			);
 			await interaction.client.channels.fetch(config.servers[interaction.guildId].requestChannelId).then(async (channel)=>{await channel.send({embeds:[embed], components:[btns]})})
-			return interaction.editReply({content:`Request was sent to the GMs for ${character.charname} to collect ${toGold(bal.value)}.`, ephemeral:true});
+			return interaction.editReply({content:`Request was sent to the GMs in <#${config.servers[interaction.guildId].requestChannelId}> for ${character.charname} to collect ${toGold(bal.value)}. You can cancel it by pressing "Deny" on the request.`, ephemeral:true});
 		}
 		catch (error) {
 			console.error(error)

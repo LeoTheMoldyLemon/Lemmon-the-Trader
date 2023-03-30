@@ -45,7 +45,7 @@ module.exports = {
 					.then(async(user)=>{await user.send(`The request for ${character.charname} to spend ${embed.fields[3].value} due to reason: ${embed.fields[2].value} has been **denied** by ${interaction.user.username}. Reason: ${reason}`)})
 			}
 			embed.author={}
-			embed.author.name=interaction.user.username
+			embed.author.name=interaction.member.displayName
 			embed.author.icon_url=await interaction.user.avatarURL(true)
 			embed.description="**Denied**. Reason:\n```"+reason+"```"
 			await interaction.message.edit({embeds:[embed], components:[]})

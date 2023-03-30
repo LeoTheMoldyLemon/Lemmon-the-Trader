@@ -6,7 +6,7 @@ const { Op } = require("sequelize");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register-short-name')
-		.setDescription('Assign a short name to a character that only you can use instead of their full name.')
+		.setDescription('DEPRECATED. Assign a short name to a character that only you can use instead of their full name.')
 		.addStringOption(option =>
 			option.setName('character-name-short')
 				.setDescription('The full or short name of your character.')
