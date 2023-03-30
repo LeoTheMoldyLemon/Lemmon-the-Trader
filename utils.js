@@ -55,5 +55,9 @@ module.exports={
 		}
 		return res.trim()
 		
+	},
+	
+	rollDice(type){
+		return Math.floor(Math.random() * type)+1;
 	}
 }
